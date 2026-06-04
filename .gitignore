@@ -1,0 +1,5 @@
+# Cloned Rust source (built at install time by extconf.rb / CI)
+ext/sqlglot_rust/sql-glot-rust/
+
+# Compiled shared library (build artifact)
+lib/sqlglot/libsqlglot_rust.*
