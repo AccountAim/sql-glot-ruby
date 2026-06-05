@@ -32,7 +32,7 @@ jobs:
             use_cross: true
 
           - platform: x86_64-darwin
-            os: macos-13
+            os: macos-latest
             rust_target: x86_64-apple-darwin
             lib_ext: dylib
 
@@ -165,6 +165,8 @@ jobs:
     name: Publish to RubyGems.org
     needs: [package-native, package-source]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: ruby/setup-ruby@v1
         with:
@@ -177,14 +179,8 @@ jobs:
           path: gems/
           merge-multiple: true
 
-      - name: Configure gem credentials
-        run: |
-          mkdir -p ~/.gem
-          cat > ~/.gem/credentials <<EOF
-          ---
-          :rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}
-          EOF
-          chmod 0600 ~/.gem/credentials
+      - name: Configure trusted publisher credentials
+        uses: rubygems/configure-rubygems-credentials@main
 
       - name: Push gems
         run: |
