@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  RUST_REPO: https://github.com/protegrity/sql-glot-rust.git
+  RUST_TAG: v0.10.0
+
+jobs:
+  test:
+    name: Tests (Ruby ${{ matrix.ruby }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.2", "3.3", "3.4"]
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Clone sql-glot-rust
+        run: git clone --depth 1 --branch ${{ env.RUST_TAG }} ${{ env.RUST_REPO }} ext/sqlglot_rust/sql-glot-rust
+
+      - name: Build shared library
+        run: cargo build --release --manifest-path ext/sqlglot_rust/sql-glot-rust/Cargo.toml
+
+      - name: Copy library to lib/
+        run: cp ext/sqlglot_rust/sql-glot-rust/target/release/libsqlglot_rust.so lib/sqlglot/
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run specs
+        run: bundle exec rspec

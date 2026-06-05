@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "set"
+
 module Sqlglot
   # High-level query metadata extraction, inspired by Python's sql-metadata.
   #

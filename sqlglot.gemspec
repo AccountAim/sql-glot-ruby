@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = "https://github.com/AccountAim/sql-glot-ruby"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.0.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.files = Dir.chdir(__dir__) do
     Dir["{lib,ext}/**/*", "Gemfile", "Rakefile", "sqlglot.gemspec"]

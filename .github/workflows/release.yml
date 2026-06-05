@@ -160,10 +160,37 @@ jobs:
           path: release-gems/*.gem
           if-no-files-found: error
 
-  # ── Job 5: Publish all gems to RubyGems.org ──────────────────────────
+  # ── Job 5: Run specs before publishing ─────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Clone sql-glot-rust
+        run: git clone --depth 1 --branch ${{ env.RUST_TAG }} ${{ env.RUST_REPO }} ext/sqlglot_rust/sql-glot-rust
+
+      - name: Build shared library
+        run: cargo build --release --manifest-path ext/sqlglot_rust/sql-glot-rust/Cargo.toml
+
+      - name: Copy library to lib/
+        run: cp ext/sqlglot_rust/sql-glot-rust/target/release/libsqlglot_rust.so lib/sqlglot/
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Run specs
+        run: bundle exec rspec
+
+  # ── Job 6: Publish all gems to RubyGems.org ──────────────────────────
   publish:
     name: Publish to RubyGems.org
-    needs: [package-native, package-source]
+    needs: [package-native, package-source, test]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
