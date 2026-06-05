@@ -15,46 +15,35 @@ A Ruby gem that wraps [sql-glot-rust](https://github.com/protegrity/sql-glot-rus
 
 ## Installation
 
-### Precompiled native gems (recommended)
-
-Precompiled gems are available for these platforms:
-
-- `x86_64-linux-gnu`
-- `aarch64-linux-gnu`
-- `x86_64-linux-musl`
-- `aarch64-linux-musl`
-- `x86_64-darwin`
-- `arm64-darwin`
-
-No Rust toolchain or compilation is required. Add the GitHub Packages source
-to your Gemfile:
+Add to your Gemfile:
 
 ```ruby
-source "https://rubygems.pkg.github.com/accountaim" do
-  gem "sqlglot"
-end
+gem "sqlglot"
 ```
 
-Bundler must be authenticated with GitHub Packages:
+Then run `bundle install`. Precompiled native gems are published to
+[rubygems.org](https://rubygems.org/gems/sqlglot) for these platforms:
 
-```sh
-bundle config https://rubygems.pkg.github.com/accountaim USERNAME:TOKEN
-```
+| Platform | Architecture |
+|---|---|
+| Linux (glibc) | x86_64, aarch64 |
+| macOS | x86_64 (Intel), arm64 (Apple Silicon) |
 
-Where `TOKEN` is a GitHub personal access token with `read:packages` scope.
+On these platforms, **no Rust toolchain is needed** -- Bundler automatically
+picks the right precompiled gem.
 
 ### Building from source
 
-On unsupported platforms, the Rust library is compiled automatically during
-`gem install` via `extconf.rb`. This requires the Rust toolchain (cargo 1.85+)
-and git.
+On other platforms (e.g. Alpine/musl), the Rust library is compiled
+automatically during `gem install` via `extconf.rb`. This requires the Rust
+toolchain (cargo 1.85+) and git.
 
 The `github:` and `path:` Gemfile options always build from source, since
 Bundler bypasses RubyGems platform selection for these sources:
 
 ```ruby
 gem "sqlglot", github: "AccountAim/sql-glot-ruby"  # requires Rust
-gem "sqlglot", path: "/path/to/this/repo"    # requires Rust
+gem "sqlglot", path: "/path/to/this/repo"           # requires Rust
 ```
 
 For local development, you can also build manually:
